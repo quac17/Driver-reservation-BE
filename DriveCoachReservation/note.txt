@@ -1,0 +1,289 @@
+# Hướng dẫn call API Drive Coach Reservation trên Postman
+
+## 1. Authentication
+
+### Đăng nhập (User)
+- **Method:** POST
+- **URL:** http://localhost:8000/authen/login
+- **Headers:**
+    - Content-Type: application/x-www-form-urlencoded
+- **Body (form-urlencoded):**
+    - username: user1
+    - password: 123456
+- **Response mẫu:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "token_type": "bearer",
+  "message": {
+    "loginData": {
+      "username": "user1",
+      "name": "Nguyễn Văn A",
+      "isMentor": false,
+      "email": "user1@example.com",
+      "phone": "0901234567"
+    }
+  }
+}
+```
+
+### Đăng nhập (Mentor)
+- **Method:** POST
+- **URL:** http://localhost:8000/authen/login
+- **Headers:**
+    - Content-Type: application/x-www-form-urlencoded
+- **Body (form-urlencoded):**
+    - username: mentor1
+    - password: 123456
+- **Response mẫu:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "token_type": "bearer",
+  "message": {
+    "loginData": {
+      "username": "mentor1",
+      "name": "Trần Văn B",
+      "isMentor": true,
+      "license_number": "DL-123456",
+      "experience_years": 5
+    }
+  }
+}
+```
+
+## 2. Mentors API
+
+### Lấy danh sách mentors
+- **Method:** GET
+- **URL:** http://localhost:8000/mentor/
+- **Response mẫu:**
+```json
+[
+  {
+    "id": 1,
+    "username": "mentor1",
+    "name": "Trần Văn B",
+    "email": "mentor1@example.com",
+    "phone": "0912345678",
+    "license_number": "DL-123456",
+    "experience_years": 5,
+    "isActive": true,
+    "createdAt": "2025-01-20T10:00:00+00:00",
+    "updatedAt": "2025-01-20T10:00:00+00:00"
+  }
+]
+```
+
+### Lấy mentor theo ID
+- **Method:** GET
+- **URL:** http://localhost:8000/mentor/1
+- **Response mẫu:**
+```json
+{
+  "id": 1,
+  "username": "mentor1",
+  "name": "Trần Văn B",
+  "email": "mentor1@example.com",
+  "phone": "0912345678",
+  "license_number": "DL-123456",
+  "experience_years": 5,
+  "isActive": true,
+  "createdAt": "2025-01-20T10:00:00+00:00",
+  "updatedAt": "2025-01-20T10:00:00+00:00"
+}
+```
+
+## 3. Cars API
+
+### Lấy danh sách cars
+- **Method:** GET
+- **URL:** http://localhost:8000/car/
+- **URL với filter:** http://localhost:8000/car/?status=available
+- **Response mẫu:**
+```json
+[
+  {
+    "id": 1,
+    "license_plate": "30A-12345",
+    "brand": "Toyota",
+    "model": "Vios",
+    "color": "Trắng",
+    "year": 2023,
+    "status": "available",
+    "isActive": true,
+    "createdAt": "2025-01-20T10:00:00+00:00",
+    "updatedAt": "2025-01-20T10:00:00+00:00"
+  }
+]
+```
+
+### Lấy car theo ID
+- **Method:** GET
+- **URL:** http://localhost:8000/car/1
+- **Response mẫu:**
+```json
+{
+  "id": 1,
+  "license_plate": "30A-12345",
+  "brand": "Toyota",
+  "model": "Vios",
+  "color": "Trắng",
+  "year": 2023,
+  "status": "available",
+  "isActive": true,
+  "createdAt": "2025-01-20T10:00:00+00:00",
+  "updatedAt": "2025-01-20T10:00:00+00:00"
+}
+```
+
+## 4. Reserves API
+
+### Lấy danh sách reserves
+- **Method:** GET
+- **URL:** http://localhost:8000/reserve/
+- **URL với filter:** 
+    - http://localhost:8000/reserve/?status=pending
+    - http://localhost:8000/reserve/?user_id=1
+    - http://localhost:8000/reserve/?mentor_id=1
+- **Headers:**
+    - Authorization: Bearer <access_token>
+- **Lưu ý:** User chỉ xem được reserves của chính mình, Mentor chỉ xem được reserves của chính mình
+- **Response mẫu:**
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "mentor_id": 1,
+    "car_id": 1,
+    "status": "pending",
+    "createdAt": "2025-01-25T07:00:00+00:00",
+    "updatedAt": "2025-01-25T07:00:00+00:00",
+    "reserve_details": [
+      {
+        "id": 1,
+        "reserve_id": 1,
+        "start_time": "2025-01-25T08:00:00+00:00",
+        "end_time": "2025-01-25T10:00:00+00:00",
+        "price": 500000,
+        "notes": "Học buổi sáng",
+        "status": "pending",
+        "createdAt": "2025-01-25T07:00:00+00:00",
+        "updatedAt": "2025-01-25T07:00:00+00:00"
+      }
+    ]
+  }
+]
+```
+
+### Lấy reserve theo ID
+- **Method:** GET
+- **URL:** http://localhost:8000/reserve/1
+- **Headers:**
+    - Authorization: Bearer <access_token>
+- **Response mẫu:**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "mentor_id": 1,
+  "car_id": 1,
+  "status": "pending",
+  "createdAt": "2025-01-25T07:00:00+00:00",
+  "updatedAt": "2025-01-25T07:00:00+00:00",
+  "reserve_details": [
+    {
+      "id": 1,
+      "reserve_id": 1,
+      "start_time": "2025-01-25T08:00:00+00:00",
+      "end_time": "2025-01-25T10:00:00+00:00",
+      "price": 500000,
+      "notes": "Học buổi sáng",
+      "status": "pending",
+      "createdAt": "2025-01-25T07:00:00+00:00",
+      "updatedAt": "2025-01-25T07:00:00+00:00"
+    }
+  ]
+}
+```
+
+### Đặt lịch hẹn (Create Reserve)
+- **Method:** POST
+- **URL:** http://localhost:8000/reserve/
+- **Headers:**
+    - Authorization: Bearer <access_token>
+    - Content-Type: application/json
+- **Body (raw, JSON):**
+```json
+{
+  "user_id": 1,
+  "mentor_id": 1,
+  "car_id": 1,
+  "status": "pending",
+  "reserve_details": [
+    {
+      "start_time": "2025-01-25T08:00:00+00:00",
+      "end_time": "2025-01-25T10:00:00+00:00",
+      "price": 500000,
+      "notes": "Học buổi sáng",
+      "status": "pending"
+    },
+    {
+      "start_time": "2025-01-26T14:00:00+00:00",
+      "end_time": "2025-01-26T16:00:00+00:00",
+      "price": 500000,
+      "notes": "Học buổi chiều",
+      "status": "pending"
+    }
+  ]
+}
+```
+- **Response mẫu:**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "mentor_id": 1,
+  "car_id": 1,
+  "status": "pending",
+  "createdAt": "2025-01-25T07:00:00+00:00",
+  "updatedAt": "2025-01-25T07:00:00+00:00",
+  "reserve_details": [
+    {
+      "id": 1,
+      "reserve_id": 1,
+      "start_time": "2025-01-25T08:00:00+00:00",
+      "end_time": "2025-01-25T10:00:00+00:00",
+      "price": 500000,
+      "notes": "Học buổi sáng",
+      "status": "pending",
+      "createdAt": "2025-01-25T07:00:00+00:00",
+      "updatedAt": "2025-01-25T07:00:00+00:00"
+    },
+    {
+      "id": 2,
+      "reserve_id": 1,
+      "start_time": "2025-01-26T14:00:00+00:00",
+      "end_time": "2025-01-26T16:00:00+00:00",
+      "price": 500000,
+      "notes": "Học buổi chiều",
+      "status": "pending",
+      "createdAt": "2025-01-25T07:00:00+00:00",
+      "updatedAt": "2025-01-25T07:00:00+00:00"
+    }
+  ]
+}
+```
+
+## Lưu ý:
+
+- <access_token> lấy từ API đăng nhập (/authen/login)
+- Chỉ User mới có thể đặt lịch hẹn (POST /reserve/)
+- User chỉ có thể đặt lịch cho chính mình (user_id phải khớp với user đang đăng nhập)
+- Hệ thống tự động kiểm tra xung đột thời gian khi đặt lịch
+- Car phải có status = "available" mới có thể đặt lịch
+- User chỉ xem được reserves của chính mình
+- Mentor chỉ xem được reserves của chính mình
+- Thời gian phải theo format ISO 8601 với timezone (ví dụ: "2025-01-25T08:00:00+00:00")
+- end_time phải sau start_time
